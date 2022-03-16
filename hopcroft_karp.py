@@ -34,6 +34,7 @@ def busca_em_largura_emparelhamento(grafo, mates, distancias, distNone):
             x = Q.pop()
             if distancias[x] < distNone[0]: 
                 for y in grafo.vizinhos(x):
+                    print(mates)
                     if mates[y] == None:
                         if distNone[0] == INF:
                             distNone[0] = distancias[x] + 1
@@ -68,6 +69,6 @@ def busca_em_profundidade_emparelhamento(grafo, mates, x, distancias, distNone):
 
 grafo1 = Grafo()
 
-grafo1.ler('entradas/gr128_10-alt.gr')
+grafo1.ler('entradas/teste_Hop.net')
 
 ordenacao = hopcroft_karp(grafo1)
