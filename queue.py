@@ -11,7 +11,7 @@ class Queue:
 
     def dequeue(self):
         if not self.empty():
-            return self.lista.pop()
+            return self.lista.pop(0)
         else:
             print("Fila vazia!")
 

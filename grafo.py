@@ -133,6 +133,15 @@ class Grafo:
                     
         return None
 
+    def getArco(self, verticeA, verticeB):
+        #Retorna a aresta entre o vérticeA e vérticeB e se não existir retonar None
+        for aresta in self.arestas:
+            if verticeA == aresta.vertices[0] and verticeB == aresta.vertices[1]:
+                return aresta
+
+        return None
+
+
     def print(self):
         print("\nPrint do Grafo ------------")
         print("Vértices: --------")
