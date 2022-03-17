@@ -6,7 +6,8 @@ from queue import Queue
 class FluxoMaximo:
     def __init__(self, grafo):
         self.grafo = grafo
-        self.grafoResidual = grafo
+        self.grafoResidual = Grafo()
+        self.fluxoMaximo = 0
         self.configurar()
         self.executar()
 
@@ -34,8 +35,20 @@ class FluxoMaximo:
         self.v = [False for i in range(len(self.grafo.vertices))]
         #Criar array de antecedentes
         self.a = [None for i in range(len(self.grafo.vertices))]
+        #Criar array de fluxo
+        self.f = [0 for i in range(len(self.grafo.arestas))]
+        
         #Criando a fila
         self.queue = Queue()
+
+        for vertice in self.grafo.vertices:
+             self.grafoResidual.adicionarVertice(vertice)
+        for aresta in self.grafo.arestas:
+            #Adicionar arestas originais
+            self.grafoResidual.adicionarAresta(aresta)
+            #Adicionar arestas de volta no grafo residual
+            #Para cada arco (u,v) E A tem-se um arco invertido em Af com capacidade cf((v,u)) = f((u,v)) 
+            self.grafoResidual.adicionarAresta(Aresta([aresta.vertices[1],aresta.vertices[0]], self.f[self.grafo.arestas.index(aresta)]))
     
     def checaFluxoMin(self, caminho):
         
@@ -43,17 +56,18 @@ class FluxoMaximo:
         fluxoLista = []
 
         for i in range(1,len(caminho)):
-            arco = self.grafo.getArco(caminho[i-1].index, caminho[i].index)
+            arco = self.grafoResidual.getArco(caminho[i-1].index, caminho[i].index)
+            arcoRetorno = self.grafoResidual.getArco(caminho[i].index, caminho[i-1].index)
+
             fluxoLista.append(arco)
-            print(caminho[i-1].index, caminho[i].index, arco.peso, fluxoMin)
+            fluxoLista.append(arcoRetorno)
+
 
             if fluxoMin == None:
-                print(f"None -> {arco.peso}")
                 fluxoMin = arco.peso
 
             if arco != None:
                 if fluxoMin > arco.peso:
-                    (f"Maior -> {arco.peso}")
                     fluxoMin = arco.peso
 
         return fluxoMin, fluxoLista
@@ -61,11 +75,17 @@ class FluxoMaximo:
 
     #Executa o algoritmo de Ford-Fulkerson
     def executar(self):
+        
+        # print("---------------")         
+        # print(self.f)
+        # self.grafoResidual.print()
+        # print("---------------")
+        
         #Encontrar a fonte
         s = self.encontrarFonte()
         
         #Criar array de fluxo (função de fluxo)
-        self.f = [0 for i in range(len(self.grafo.arestas)*2)]
+        
 
         # Enquanto existir um caminho aumentante p na rede residual s a t
         while True:
@@ -74,21 +94,20 @@ class FluxoMaximo:
             if caminho == None:
                 break
 
-            print(caminho)
             fluxoMin, listaArcos = self.checaFluxoMin(caminho)
-            print(fluxoMin)
-
-
-            ultimo = self.a[-1]
             
             for arco in listaArcos:
                 arc = self.grafo.getArco(arco.vertices[0],arco.vertices[1])
 
                 if arc != None:
-                    self.f[listaArcos.index(arco)] = self.f[listaArcos.index(arco)] + fluxoMin
+                    self.f[self.grafo.arestas.index(arco)] = self.f[self.grafo.arestas.index(arco)] + fluxoMin
+                    arco.peso = arco.peso - fluxoMin
                 else:
-                    self.f[(listaArcos.index(arco))*2] = self.f[(listaArcos.index(arco))*2] - fluxoMin
+                    #self.f[(listaArcos.index(arco))*2] = self.f[(listaArcos.index(arco))*2] - fluxoMin
+                    arco.peso = arco.peso + fluxoMin
             
+            self.fluxoMaximo += fluxoMin
+
             # Atualização do fluxo da cada um dos vértices
             # for i in range(len(self.grafo.arestas)):
             #     print(self.a[ultimo.index-1].index-1, ultimo.index)
@@ -97,13 +116,21 @@ class FluxoMaximo:
             #     else:
             #         self.f[i*2] = self.f[i*2] - fluxoMin
                     
-                             
-        print(self.f)
-        self.grafo.print()
+        #     print("---------------")         
+        #     print(self.f)
+        #     self.grafoResidual.print()
+            for i in range(len(listaArcos)):
+                print(listaArcos[i].vertices, end=',')
+        #     print("\n")
+            print(fluxoMin)
+        #     print("---------------")
+
+        # print(f"Fluxo máximo = {self.fluxoMaximo}")
 
     #Retorna um caminho aumentante ou retorna None
     def encontrarCaminhoAumentante(self, s):
         #Recebemos o index da fonte s, então setamos seu visitado para True
+        self.v = [False for i in range(len(self.grafo.vertices))]
         self.v[s] = True
         self.queue.enqueue(self.grafo.vertices[s])
         
@@ -122,7 +149,7 @@ class FluxoMaximo:
 
             for vizinho in vizinhos:
                 # Se v não foi visitado e capacidade de fluxo de (u,v) é maior que 0
-                if self.v[vizinho-1] == False and self.grafo.getAresta(u.index, vizinho):
+                if self.v[vizinho-1] == False and self.grafoResidual.getArco(u.index, vizinho).peso > 0:
                     self.v[vizinho-1] = True
                     self.a[vizinho-1] = u
 
@@ -131,7 +158,6 @@ class FluxoMaximo:
                     if self.checaSorvedouro(vizinho-1):
                         vertice = vizinho-1
                         verticeObj = self.grafo.vertices[vertice]
-                        print(verticeObj.rotulo)
                         caminhoAumentante = [verticeObj]
                         # Enquanto não chegarmos na fonte, estaremos fazendo o caminho de volta
                         # a ela. E por isso vamos adicionando os vértices ao caminho
