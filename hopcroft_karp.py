@@ -14,7 +14,7 @@ def hopcroft_karp(grafo):
                     m += 1
 
     print(f"Emparelhamento máximo: {m}")
-    return mates
+    print(f"Arestas: {mates}")
 
 def busca_em_largura_emparelhamento(grafo, mates, distancias, distNone):
         Q = []
@@ -32,10 +32,10 @@ def busca_em_largura_emparelhamento(grafo, mates, distancias, distNone):
         distNone[0] = INF
         while len(Q) > 0:
             x = Q.pop()
-            if distancias[x] < distNone[0]: 
+            x += 1
+            if distancias[x+1] < distNone[0]: 
                 for y in grafo.vizinhos(x):
-                    print(mates)
-                    if mates[y] == None:
+                    if mates[y-1] == None:
                         if distNone[0] == INF:
                             distNone[0] = distancias[x] + 1
                     else:
@@ -49,16 +49,16 @@ def busca_em_profundidade_emparelhamento(grafo, mates, x, distancias, distNone):
     INF = float("inf")
     
     if x != None:
-        for y in grafo.vizinhos(x):
-            if mates[y] == None:
+        for y in grafo.vizinhos(x+1):
+            if mates[y-1] == None:
                 if distNone[0] == distancias[x] + 1:
-                    if busca_em_profundidade_emparelhamento(grafo, mates, mates[y], distancias, distNone):
+                    if busca_em_profundidade_emparelhamento(grafo, mates, mates[y-1], distancias, distNone):
                         # mates[y] = x
                         mates[x] = y
                         return True
             else:
                 if distancias[mates[y]] == distancias[x] + 1:
-                    if busca_em_profundidade_emparelhamento(grafo, mates, mates[y], distancias, distNone):
+                    if busca_em_profundidade_emparelhamento(grafo, mates, mates[y-1], distancias, distNone):
                         mates[y] = x
                         mates[x] = y
                         return True
