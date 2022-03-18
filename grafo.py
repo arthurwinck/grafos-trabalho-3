@@ -86,12 +86,16 @@ class Grafo:
 
                 lista_linha = linha.split(' ')
 
-                if lista_linha[2].endswith('\n'):
-                    lista_linha[2] = lista_linha[2][:-1]
-
-
                 indice1, indice2 = int(lista_linha[0]), int(lista_linha[1])
-                aresta = Aresta([int(indice1), int(indice2)], int(lista_linha[2]))
+
+                if len(lista_linha) >= 3:
+                    if lista_linha[2].endswith('\n'):
+                        lista_linha[2] = lista_linha[2][:-1]
+
+
+                    aresta = Aresta([int(indice1), int(indice2)], int(lista_linha[2]))
+                else:
+                    aresta = Aresta([int(indice1), int(indice2)], 0)
 
                 self.pair_to_aresta[(indice1, indice2)] = aresta
 

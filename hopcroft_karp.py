@@ -69,6 +69,6 @@ def busca_em_profundidade_emparelhamento(grafo, mates, x, distancias, distNone):
 
 grafo1 = Grafo()
 
-grafo1.ler('entradas/teste_Hop.net')
+grafo1.ler('entradas/gr128_10-alt.gr')
 
 ordenacao = hopcroft_karp(grafo1)
