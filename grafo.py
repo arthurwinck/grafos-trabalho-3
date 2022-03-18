@@ -141,7 +141,6 @@ class Grafo:
 
         return None
 
-
     def print(self):
         print("\nPrint do Grafo ------------")
         print("Vértices: --------")
