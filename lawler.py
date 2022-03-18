@@ -38,6 +38,4 @@ def lawler(grafo):
         
         
         
-grafo1 = Grafo()
-grafo1.ler("entradas/lawler.net")
-lawler(grafo1)
+

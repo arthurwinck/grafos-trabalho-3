@@ -125,7 +125,7 @@ class FluxoMaximo:
             print(fluxoMin)
         #     print("---------------")
 
-        # print(f"Fluxo máximo = {self.fluxoMaximo}")
+        print(f"Fluxo máximo = {self.fluxoMaximo}")
 
     #Retorna um caminho aumentante ou retorna None
     def encontrarCaminhoAumentante(self, s):
