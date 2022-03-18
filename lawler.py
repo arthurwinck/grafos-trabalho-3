@@ -34,8 +34,6 @@ def lawler(grafo):
             u, v = grafo.indice_to_vertice[u_indice], grafo.indice_to_vertice[v_indice]
             if u in vertices and v in vertices:
                 arestas.append((u, v))
-                print("h")
-        
         
         
 grafo1 = Grafo()
